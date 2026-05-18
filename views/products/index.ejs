@@ -1,0 +1,135 @@
+<%- layout('layouts/boilerplate') %>
+
+<div class="container-fluid py-4">
+  <div class="row g-4">
+    <!-- FILTERS SIDEBAR -->
+    <div class="col-lg-3 col-xl-2">
+      <div class="filters-panel">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0 text-orange"><i class="bi bi-sliders me-2"></i>Filters</h5>
+          <a href="/products" class="btn btn-sm btn-outline-secondary">Clear</a>
+        </div>
+        <form method="GET" action="/products" id="filterForm">
+          <!-- Category -->
+          <div class="filter-section">
+            <div class="filter-section-title">Category</div>
+            <% ['Drills','Grinders','Saws','Wrenches','Sanders','Accessories'].forEach(cat => { %>
+              <label class="filter-option">
+                <input type="radio" name="category" value="<%= cat %>"
+                  <%= filters.category === cat ? 'checked' : '' %> onchange="this.form.submit()">
+                <%= cat %>
+              </label>
+            <% }) %>
+            <label class="filter-option">
+              <input type="radio" name="category" value="" <%= !filters.category ? 'checked' : '' %> onchange="this.form.submit()">
+              All Categories
+            </label>
+          </div>
+          <!-- Brand -->
+          <div class="filter-section">
+            <div class="filter-section-title">Brand</div>
+            <% ['Bosch','DeWalt','Makita','Stanley','Hitachi','Milwaukee'].forEach(b => { %>
+              <label class="filter-option">
+                <input type="checkbox" name="brand" value="<%= b %>"
+                  <%= filters.brand && (Array.isArray(filters.brand) ? filters.brand.includes(b) : filters.brand===b) ? 'checked' : '' %>
+                  onchange="this.form.submit()">
+                <%= b %>
+              </label>
+            <% }) %>
+          </div>
+          <!-- Price -->
+          <div class="filter-section">
+            <div class="filter-section-title">Max Price</div>
+            <input type="range" class="form-range" name="maxPrice" min="500" max="50000" step="500"
+              value="<%= filters.maxPrice || 50000 %>" id="priceRange"
+              oninput="document.getElementById('priceVal').textContent='₹'+parseInt(this.value).toLocaleString()">
+            <div class="d-flex justify-content-between">
+              <small class="text-muted">₹500</small>
+              <small class="text-orange fw-bold" id="priceVal">₹<%= parseInt(filters.maxPrice||50000).toLocaleString() %></small>
+            </div>
+          </div>
+          <!-- Sort (hidden, controlled by top dropdown) -->
+          <input type="hidden" name="sort" id="sortHidden" value="<%= filters.sort || '' %>">
+          <input type="hidden" name="search" value="<%= filters.search || '' %>">
+          <button type="submit" class="btn btn-orange w-100 mt-2">Apply Filters</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- PRODUCTS AREA -->
+    <div class="col-lg-9 col-xl-10">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div class="text-muted small">Showing <strong><%= total %></strong> products
+          <% if (filters.category) { %><span class="badge bg-orange ms-1"><%= filters.category %></span><% } %>
+        </div>
+        <select class="form-select form-select-sm w-auto" onchange="sortProducts(this.value)">
+          <option value="">Sort: Featured</option>
+          <option value="price-asc"  <%= filters.sort==='price-asc'  ? 'selected':'' %>>Price: Low → High</option>
+          <option value="price-desc" <%= filters.sort==='price-desc' ? 'selected':'' %>>Price: High → Low</option>
+          <option value="rating"     <%= filters.sort==='rating'     ? 'selected':'' %>>Top Rated</option>
+          <option value="name"       <%= filters.sort==='name'       ? 'selected':'' %>>Name A–Z</option>
+        </select>
+      </div>
+
+      <div class="row g-3">
+        <% if (products.length) { %>
+          <% for (const p of products) { %>
+          <div class="col-sm-6 col-xl-4">
+            <div class="product-card">
+              <a href="/products/<%= p._id %>" class="product-img-link">
+                <img src="<%= p.primaryImage %>" alt="<%= p.name %>" class="product-img" loading="lazy">
+                <% if (p.badge) { %><span class="badge badge-product <%= p.badgeType %>"><%= p.badge %></span><% } %>
+              </a>
+              <div class="product-body">
+                <div class="product-brand"><%= p.brand.toUpperCase() %></div>
+                <a href="/products/<%= p._id %>" class="product-name"><%= p.name %></a>
+                <div class="product-rating">
+                  <span class="stars"><%- '★'.repeat(Math.floor(p.avgRating)) %><%- '☆'.repeat(5-Math.floor(p.avgRating)) %></span>
+                  <span class="text-muted small">(<%= p.reviews.length %>)</span>
+                </div>
+                <div class="product-price-row">
+                  <span class="product-price">₹<%= p.price.toLocaleString() %></span>
+                  <span class="product-mrp">₹<%= p.mrp.toLocaleString() %></span>
+                  <span class="product-discount">-<%= p.discount %>%</span>
+                </div>
+              </div>
+              <div class="product-footer">
+                <button class="btn btn-outline-orange btn-sm flex-fill" onclick="addToCart('<%= p._id %>')">
+                  <i class="bi bi-cart-plus"></i> Add
+                </button>
+                <a href="/products/<%= p._id %>" class="btn btn-orange btn-sm flex-fill">View →</a>
+              </div>
+            </div>
+          </div>
+          <% } %>
+        <% } else { %>
+          <div class="col-12 text-center py-5">
+            <div style="font-size:4rem">🔧</div>
+            <h4 class="text-muted mt-2">No products found</h4>
+            <a href="/products" class="btn btn-orange mt-3">Clear Filters</a>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- PAGINATION -->
+      <% if (totalPages > 1) { %>
+      <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= page === i ? 'active' : '' %>">
+              <a class="page-link rpt-page-link" href="/products?page=<%= i %>&category=<%= filters.category||'' %>&sort=<%= filters.sort||'' %>"><%= i %></a>
+            </li>
+          <% } %>
+        </ul>
+      </nav>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<script>
+function sortProducts(val) {
+  document.getElementById('sortHidden').value = val;
+  document.getElementById('filterForm').submit();
+}
+</script>

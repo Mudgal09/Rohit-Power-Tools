@@ -1,0 +1,86 @@
+<%- layout('layouts/boilerplate') %>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="section-title mb-0">Add <span class="text-orange">Product</span></h2>
+    <a href="/admin/products" class="btn btn-outline-secondary btn-sm">← Back</a>
+  </div>
+  <div class="checkout-card">
+    <form action="/admin/products" method="POST" enctype="multipart/form-data" novalidate>
+      <div class="row g-3">
+        <div class="col-md-8">
+          <label class="form-label">Product Name *</label>
+          <input type="text" class="form-control rpt-input" name="product[name]" required placeholder="e.g. Bosch GSB 550W Drill">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Brand *</label>
+          <select class="form-select rpt-input" name="product[brand]" required>
+            <option value="">Select Brand</option>
+            <% ['Bosch','DeWalt','Makita','Stanley','Hitachi','Milwaukee','Generic'].forEach(b => { %>
+              <option value="<%= b %>"><%= b %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Category *</label>
+          <select class="form-select rpt-input" name="product[category]" required>
+            <option value="">Select Category</option>
+            <% ['Drills','Grinders','Saws','Wrenches','Sanders','Accessories'].forEach(c => { %>
+              <option value="<%= c %>"><%= c %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Selling Price (₹) *</label>
+          <input type="number" class="form-control rpt-input" name="product[price]" required min="1" placeholder="3499">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">MRP (₹) *</label>
+          <input type="number" class="form-control rpt-input" name="product[mrp]" required min="1" placeholder="5999">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Stock Quantity *</label>
+          <input type="number" class="form-control rpt-input" name="product[stock]" min="0" value="50">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Badge Label</label>
+          <input type="text" class="form-control rpt-input" name="product[badge]" placeholder="e.g. Best Seller">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Badge Style</label>
+          <select class="form-select rpt-input" name="product[badgeType]">
+            <option value="badge-orange">Orange</option>
+            <option value="badge-red">Red (Sale)</option>
+            <option value="badge-green">Green (Offer)</option>
+            <option value="badge-yellow">Yellow (New)</option>
+          </select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="product[isFeatured]" id="isFeatured" value="true">
+            <label class="form-check-label" for="isFeatured">⭐ Feature on Homepage</label>
+          </div>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Description *</label>
+          <textarea class="form-control rpt-input" name="product[description]" rows="4" required placeholder="Detailed product description..."></textarea>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Key Features <small class="text-muted">(one per line)</small></label>
+          <textarea class="form-control rpt-input" name="product[features]" rows="5" placeholder="Electronic speed control&#10;Metal gearbox for durability&#10;Ergonomic soft-grip handle"></textarea>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">In the Box <small class="text-muted">(one per line)</small></label>
+          <textarea class="form-control rpt-input" name="product[inBox]" rows="5" placeholder="Drill Machine&#10;Auxiliary Handle&#10;Chuck Key&#10;Carry Case"></textarea>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Product Images <small class="text-muted">(up to 8 images)</small></label>
+          <input type="file" class="form-control rpt-input" name="images" multiple accept="image/*">
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-orange btn-lg me-2">⚡ Create Product</button>
+          <a href="/admin/products" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,101 @@
+<%- layout('layouts/boilerplate') %>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="section-title mb-0">Edit <span class="text-orange">Product</span></h2>
+    <a href="/admin/products" class="btn btn-outline-secondary btn-sm">← Back</a>
+  </div>
+  <div class="checkout-card">
+    <form action="/admin/products/<%= product._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+      <div class="row g-3">
+        <div class="col-md-8">
+          <label class="form-label">Product Name *</label>
+          <input type="text" class="form-control rpt-input" name="product[name]" value="<%= product.name %>" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Brand *</label>
+          <select class="form-select rpt-input" name="product[brand]" required>
+            <% ['Bosch','DeWalt','Makita','Stanley','Hitachi','Milwaukee','Generic'].forEach(b => { %>
+              <option value="<%= b %>" <%= product.brand === b ? 'selected' : '' %>><%= b %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Category *</label>
+          <select class="form-select rpt-input" name="product[category]" required>
+            <% ['Drills','Grinders','Saws','Wrenches','Sanders','Accessories'].forEach(c => { %>
+              <option value="<%= c %>" <%= product.category === c ? 'selected' : '' %>><%= c %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Selling Price (₹) *</label>
+          <input type="number" class="form-control rpt-input" name="product[price]" value="<%= product.price %>" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">MRP (₹) *</label>
+          <input type="number" class="form-control rpt-input" name="product[mrp]" value="<%= product.mrp %>" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Stock *</label>
+          <input type="number" class="form-control rpt-input" name="product[stock]" value="<%= product.stock %>">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Badge</label>
+          <input type="text" class="form-control rpt-input" name="product[badge]" value="<%= product.badge || '' %>">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Badge Style</label>
+          <select class="form-select rpt-input" name="product[badgeType]">
+            <% ['badge-orange','badge-red','badge-green','badge-yellow'].forEach(t => { %>
+              <option value="<%= t %>" <%= product.badgeType === t ? 'selected' : '' %>><%= t %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="product[isFeatured]" id="isFeatured" value="true" <%= product.isFeatured ? 'checked' : '' %>>
+            <label class="form-check-label" for="isFeatured">⭐ Feature on Homepage</label>
+          </div>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Description *</label>
+          <textarea class="form-control rpt-input" name="product[description]" rows="4" required><%= product.description %></textarea>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Key Features <small class="text-muted">(one per line)</small></label>
+          <textarea class="form-control rpt-input" name="product[features]" rows="5"><%= product.features.join('\n') %></textarea>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">In the Box <small class="text-muted">(one per line)</small></label>
+          <textarea class="form-control rpt-input" name="product[inBox]" rows="5"><%= product.inBox.join('\n') %></textarea>
+        </div>
+
+        <!-- EXISTING IMAGES -->
+        <% if (product.images.length) { %>
+          <div class="col-12">
+            <label class="form-label">Current Images <small class="text-muted">(check to delete)</small></label>
+            <div class="d-flex gap-3 flex-wrap">
+              <% product.images.forEach(img => { %>
+                <div class="position-relative">
+                  <img src="<%= img.thumbnail || img.url %>" alt="" style="width:100px;height:75px;object-fit:cover;border-radius:4px;border:1px solid #333">
+                  <label class="position-absolute top-0 end-0 m-1">
+                    <input type="checkbox" name="deleteImages" value="<%= img.filename %>" class="form-check-input" style="accent-color:red">
+                  </label>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        <% } %>
+
+        <div class="col-12">
+          <label class="form-label">Add New Images</label>
+          <input type="file" class="form-control rpt-input" name="images" multiple accept="image/*">
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-orange btn-lg me-2">💾 Save Changes</button>
+          <a href="/admin/products" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+<footer class="rpt-footer mt-5">
+  <div class="container">
+    <div class="row g-4 py-4">
+      <div class="col-lg-4">
+        <div class="footer-brand">⚡ ROHIT <span>POWER</span> TOOLS</div>
+        <p class="text-muted small mt-2">India's most trusted online power tool store. Serving professionals and DIY enthusiasts since 2010.</p>
+        <div class="footer-social mt-3">
+          <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-2 col-6">
+        <h6 class="footer-heading">Shop</h6>
+        <ul class="footer-links">
+          <li><a href="/products">All Products</a></li>
+          <li><a href="/products?category=Drills">Drills</a></li>
+          <li><a href="/products?category=Grinders">Grinders</a></li>
+          <li><a href="/products?category=Saws">Saws</a></li>
+          <li><a href="/products?category=Accessories">Accessories</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-2 col-6">
+        <h6 class="footer-heading">Account</h6>
+        <ul class="footer-links">
+          <% if (currentUser) { %>
+            <li><a href="/profile">My Profile</a></li>
+            <li><a href="/orders">My Orders</a></li>
+            <li><a href="/cart">My Cart</a></li>
+            <li><a href="/logout">Logout</a></li>
+          <% } else { %>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+          <% } %>
+        </ul>
+      </div>
+      <div class="col-lg-4">
+        <h6 class="footer-heading">Contact Us</h6>
+        <ul class="footer-links">
+          <li><i class="bi bi-telephone-fill text-orange me-2"></i>1800-ROHIT-TOOLS</li>
+          <li><i class="bi bi-envelope-fill text-orange me-2"></i>support@rohitpowertools.in</li>
+          <li><i class="bi bi-geo-alt-fill text-orange me-2"></i>Bahadurgarh, Haryana, India</li>
+          <li><i class="bi bi-clock-fill text-orange me-2"></i>Mon–Sat, 9am–6pm IST</li>
+        </ul>
+        <a href="/chatbot" class="btn btn-orange btn-sm mt-2">
+          <i class="bi bi-robot me-1"></i>Chat with Bolt AI (24/7)
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <%= new Date().getFullYear() %> Rohit Power Tools. All rights reserved. 🇮🇳</span>
+      <span class="text-muted small">GST: 06ROHIT1234A1Z5 · Privacy Policy · Terms of Service</span>
+    </div>
+  </div>
+</footer>

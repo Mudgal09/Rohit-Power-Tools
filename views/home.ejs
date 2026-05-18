@@ -1,0 +1,114 @@
+<%- layout('layouts/boilerplate') %>
+
+<!-- HERO -->
+<section class="rpt-hero">
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="row align-items-center min-vh-60">
+      <div class="col-lg-6">
+        <div class="hero-eyebrow">India's #1 Power Tool Store</div>
+        <h1 class="hero-title">Built for <span class="text-orange">Power.</span><br>Built to Last.</h1>
+        <p class="hero-sub">Professional-grade tools for every trade. Drills, grinders, saws and more — from brands you trust.</p>
+        <div class="d-flex gap-3 flex-wrap mt-4">
+          <a href="/products" class="btn btn-orange btn-lg">⚡ Shop Now</a>
+          <a href="/chatbot" class="btn btn-outline-light btn-lg">🤖 AI Support</a>
+        </div>
+        <div class="hero-stats mt-4 pt-4">
+          <div><div class="stat-num">500+</div><div class="stat-label">Products</div></div>
+          <div><div class="stat-num">50K+</div><div class="stat-label">Customers</div></div>
+          <div><div class="stat-num">15+</div><div class="stat-label">Brands</div></div>
+          <div><div class="stat-num">4.8★</div><div class="stat-label">Avg Rating</div></div>
+        </div>
+      </div>
+      <div class="col-lg-6 text-center mt-4 mt-lg-0">
+        <img src="https://images.unsplash.com/photo-1504148455328-c376907d081c?w=600&q=80"
+             alt="Power Tools" class="hero-img img-fluid rounded shadow">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<div class="rpt-features-strip py-3">
+  <div class="container">
+    <div class="row g-3 text-center">
+      <div class="col-6 col-md-3"><span class="feature-icon">🚚</span><strong>Free Shipping</strong><br><small class="text-muted">On orders above ₹2,000</small></div>
+      <div class="col-6 col-md-3"><span class="feature-icon">🔄</span><strong>30-Day Returns</strong><br><small class="text-muted">Hassle-free policy</small></div>
+      <div class="col-6 col-md-3"><span class="feature-icon">🛡️</span><strong>2-Year Warranty</strong><br><small class="text-muted">On premium tools</small></div>
+      <div class="col-6 col-md-3"><span class="feature-icon">🤖</span><strong>AI Support</strong><br><small class="text-muted">24/7 Bolt AI chat</small></div>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="container py-5">
+  <h2 class="section-title">Shop by <span class="text-orange">Category</span></h2>
+  <div class="row g-3 mt-3">
+    <% const cats = [
+      {name:'Drills',icon:'🔩',count:48}, {name:'Grinders',icon:'⚙️',count:32},
+      {name:'Saws',icon:'🔪',count:25}, {name:'Wrenches',icon:'🔧',count:40},
+      {name:'Sanders',icon:'🛠️',count:18}, {name:'Accessories',icon:'🔋',count:120}
+    ]; %>
+    <% for (const cat of cats) { %>
+      <div class="col-6 col-md-4 col-lg-2">
+        <a href="/products?category=<%= cat.name %>" class="cat-card text-decoration-none">
+          <div class="cat-icon"><%= cat.icon %></div>
+          <div class="cat-name"><%= cat.name %></div>
+          <div class="cat-count"><%= cat.count %> items</div>
+        </a>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- PROMO BANNER -->
+<div class="container pb-5">
+  <div class="promo-banner">
+    <div>
+      <h2 class="promo-title">MEGA TOOLS SALE<br>UP TO 40% OFF</h2>
+      <p class="promo-sub">Use code <strong>ROHIT10</strong> for extra 10% off</p>
+    </div>
+    <a href="/products" class="btn btn-dark btn-lg px-5">⚡ Shop Deals</a>
+  </div>
+</div>
+
+<!-- BRANDS -->
+<div class="container pb-5">
+  <h2 class="section-title">Top <span class="text-orange">Brands</span></h2>
+  <div class="brands-row mt-3">
+    <% ['BOSCH','DEWALT','MAKITA','STANLEY','HITACHI','MILWAUKEE'].forEach(b => { %>
+      <a href="/products?brand=<%= b.charAt(0)+b.slice(1).toLowerCase() %>" class="brand-name"><%= b %></a>
+    <% }) %>
+  </div>
+</div>
+
+<!-- REVIEWS -->
+<div class="container pb-5">
+  <h2 class="section-title">Customer <span class="text-orange">Reviews</span></h2>
+  <div class="row g-3 mt-2">
+    <div class="col-md-4">
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <p class="review-text">"Bought the Bosch GSB 550 drill. Excellent quality and very powerful. Delivered in 2 days to Delhi. Highly recommended!"</p>
+        <div class="review-author"><div class="review-avatar">R</div><div><strong>Rajesh Kumar</strong><br><small class="text-muted">Bosch GSB 550 Drill</small></div></div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="review-card">
+        <div class="stars">★★★★★</div>
+        <p class="review-text">"The AI chatbot helped me choose the right grinder. Got my Makita at 30% off. Amazing service and fast shipping!"</p>
+        <div class="review-author"><div class="review-avatar">P</div><div><strong>Priya Singh</strong><br><small class="text-muted">Makita 9523NB Grinder</small></div></div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="review-card">
+        <div class="stars">★★★★☆</div>
+        <p class="review-text">"Great product range. DeWalt jigsaw is top quality. Shipping was fast and packaging was solid. Will order again!"</p>
+        <div class="review-author"><div class="review-avatar">A</div><div><strong>Amit Sharma</strong><br><small class="text-muted">DeWalt DCS331 Jigsaw</small></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING CHAT -->
+<a href="/chatbot" class="float-chat-btn" title="Chat with Bolt AI">🤖</a>

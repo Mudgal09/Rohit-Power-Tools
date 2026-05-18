@@ -1,0 +1,156 @@
+<%- layout('layouts/boilerplate') %>
+
+<div class="container py-4">
+  <h2 class="section-title mb-4">My <span class="text-orange">Cart</span></h2>
+
+  <% if (!cart.length) { %>
+    <div class="text-center py-5">
+      <div style="font-size:5rem">🛒</div>
+      <h4 class="text-muted mt-3">Your cart is empty!</h4>
+      <p class="text-muted">Add some power tools to get started.</p>
+      <a href="/products" class="btn btn-orange btn-lg mt-2">⚡ Shop Now</a>
+    </div>
+  <% } else { %>
+  <div class="row g-4">
+    <!-- CART ITEMS -->
+    <div class="col-lg-8">
+      <% cart.forEach(item => { %>
+        <div class="cart-item-card" id="cart-item-<%= item.productId %>">
+          <img src="<%= item.image %>" alt="<%= item.name %>" class="cart-item-img">
+          <div class="cart-item-info flex-fill">
+            <div class="small text-orange fw-bold"><%= item.brand.toUpperCase() %></div>
+            <div class="cart-item-name"><%= item.name %></div>
+            <div class="text-success small">● In Stock</div>
+            <div class="d-flex align-items-center gap-3 mt-2 flex-wrap">
+              <div class="qty-ctrl">
+                <button class="qty-btn cart-qty-btn"
+                  data-id="<%= item.productId %>"
+                  data-qty="<%= item.qty - 1 %>">−</button>
+                <input type="number" class="qty-input" value="<%= item.qty %>" readonly>
+                <button class="qty-btn cart-qty-btn"
+                  data-id="<%= item.productId %>"
+                  data-qty="<%= item.qty + 1 %>">+</button>
+              </div>
+              <button class="btn btn-link text-danger btn-sm p-0 cart-remove-btn"
+                data-id="<%= item.productId %>">
+                <i class="bi bi-trash me-1"></i>Remove
+              </button>
+              <a href="/products/<%= item.productId %>" class="btn btn-link text-muted btn-sm p-0">View Product</a>
+            </div>
+          </div>
+          <div class="cart-item-price text-end">
+            <div class="fw-bold text-orange fs-5">₹<%= (item.price * item.qty).toLocaleString() %></div>
+            <div class="text-muted small">₹<%= item.price.toLocaleString() %> × <%= item.qty %></div>
+            <div class="text-muted text-decoration-line-through small">₹<%= item.mrp.toLocaleString() %></div>
+          </div>
+        </div>
+      <% }) %>
+
+      <!-- COUPON -->
+      <div class="coupon-box mt-3">
+        <h6 class="fw-bold mb-3"><i class="bi bi-tag-fill text-orange me-2"></i>Apply Coupon</h6>
+        <div class="d-flex gap-2">
+          <input type="text" class="form-control rpt-input" id="couponInput"
+            placeholder="Enter coupon code" value="<%= coupon ? coupon.code : '' %>">
+          <button class="btn btn-outline-orange" onclick="applyCouponCode()">Apply</button>
+          <% if (coupon) { %>
+            <button class="btn btn-outline-danger" onclick="removeCoupon()">Remove</button>
+          <% } %>
+        </div>
+        <div id="couponMsg" class="mt-2">
+          <% if (coupon) { %>
+            <div class="text-success small"><i class="bi bi-check-circle me-1"></i>Coupon <strong><%= coupon.code %></strong> applied! You saved ₹<%= coupon.discount.toLocaleString() %></div>
+          <% } %>
+        </div>
+        <div class="mt-2">
+          <small class="text-muted">Available codes: <code>ROHIT10</code> · <code>TOOLS20</code> · <code>FLAT500</code> · <code>NEWUSER</code></small>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="col-lg-4">
+      <div class="cart-summary-box">
+        <h5 class="fw-bold text-uppercase letter-spacing mb-3 pb-2 border-bottom border-secondary">Order Summary</h5>
+        <div class="summary-row"><span>Subtotal (<%= cart.reduce((s,i) => s+i.qty, 0) %> items)</span><span>₹<%= subtotal.toLocaleString() %></span></div>
+        <div class="summary-row text-success"><span>Discount</span><span>-₹<%= (subtotal - cart.reduce((s,i)=>s+(i.mrp-i.price)*i.qty,0)).toLocaleString() %></span></div>
+        <% if (discount > 0) { %>
+          <div class="summary-row text-success"><span>Coupon Discount</span><span>-₹<%= discount.toLocaleString() %></span></div>
+        <% } %>
+        <div class="summary-row"><span>Shipping</span>
+          <span><% if (shipping === 0) { %><span class="text-success">FREE</span><% } else { %>₹<%= shipping %><% } %></span>
+        </div>
+        <div class="summary-row"><span>GST (18%)</span><span>₹<%= gst.toLocaleString() %></span></div>
+        <div class="summary-row total-row"><span>Total</span><span class="text-orange">₹<%= total.toLocaleString() %></span></div>
+
+        <% if (currentUser) { %>
+          <a href="/orders/checkout" class="btn btn-orange w-100 mt-3 btn-lg">
+            <i class="bi bi-lock-fill me-1"></i> Proceed to Checkout
+          </a>
+        <% } else { %>
+          <a href="/login" class="btn btn-orange w-100 mt-3 btn-lg">Login to Checkout</a>
+        <% } %>
+        <a href="/products" class="btn btn-outline-secondary w-100 mt-2">← Continue Shopping</a>
+
+        <div class="text-center mt-3">
+          <small class="text-muted"><i class="bi bi-shield-lock me-1"></i>Secure checkout · UPI · Cards · Net Banking</small>
+        </div>
+        <% if (shipping > 0) { %>
+          <div class="alert alert-info mt-3 small p-2">
+            Add ₹<%= (2000 - subtotal).toLocaleString() %> more for <strong>FREE shipping</strong>!
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <% } %>
+</div>
+
+<script>
+// ── Event delegation for qty and remove buttons ───────────────
+document.addEventListener('click', function(e) {
+  // Qty change button
+  const qtyBtn = e.target.closest('.cart-qty-btn');
+  if (qtyBtn) {
+    const productId = qtyBtn.dataset.id;
+    const qty       = parseInt(qtyBtn.dataset.qty);
+    if (qty < 1) return removeCartItem(productId);
+    fetch('/cart/update', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ productId, qty })
+    }).then(() => location.reload());
+    return;
+  }
+  // Remove button
+  const removeBtn = e.target.closest('.cart-remove-btn');
+  if (removeBtn) {
+    removeCartItem(removeBtn.dataset.id);
+  }
+});
+
+function removeCartItem(productId) {
+  fetch('/cart/remove', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ productId })
+  }).then(() => location.reload());
+}
+
+function applyCouponCode() {
+  const code = document.getElementById('couponInput').value.trim();
+  fetch('/cart/coupon', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ code })
+  }).then(r => r.json()).then(d => {
+    const msg = document.getElementById('couponMsg');
+    if (d.valid) {
+      msg.innerHTML = `<div class="text-success small"><i class="bi bi-check-circle me-1"></i>${d.message}</div>`;
+      setTimeout(() => location.reload(), 800);
+    } else {
+      msg.innerHTML = `<div class="text-danger small"><i class="bi bi-x-circle me-1"></i>${d.message}</div>`;
+    }
+  });
+}
+function removeCoupon() {
+  fetch('/cart/coupon', { method: 'DELETE' }).then(() => location.reload());
+}
+</script>

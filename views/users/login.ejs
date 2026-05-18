@@ -1,0 +1,21 @@
+<%- layout('layouts/boilerplate') %>
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">⚡ ROHIT <span>POWER</span> TOOLS</div>
+    <h4 class="text-center mb-4">Login to Your Account</h4>
+    <form action="/login" method="POST" novalidate>
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input type="text" class="form-control rpt-input" name="username" required placeholder="your_username" autofocus>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-control rpt-input" name="password" required placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn btn-orange w-100 btn-lg">⚡ Login</button>
+    </form>
+    <div class="text-center mt-3 text-muted small">
+      Don't have an account? <a href="/register" class="text-orange">Register here</a>
+    </div>
+  </div>
+</div>

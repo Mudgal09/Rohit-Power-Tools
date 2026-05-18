@@ -1,0 +1,11 @@
+<%- layout('layouts/boilerplate') %>
+<div class="container py-5 text-center">
+  <div style="font-size:5rem"><%= err.statusCode === 404 ? '🔍' : '⚠️' %></div>
+  <h1 class="text-orange display-4 fw-bold mt-3"><%= err.statusCode || 500 %></h1>
+  <h4 class="text-light mb-3"><%= err.message || 'Something went wrong' %></h4>
+  <p class="text-muted">Don't worry, our tools are still sharp. Let's get you back on track.</p>
+  <div class="d-flex gap-3 justify-content-center mt-4">
+    <a href="/" class="btn btn-orange btn-lg">🏠 Go Home</a>
+    <a href="/products" class="btn btn-outline-orange btn-lg">⚡ Browse Tools</a>
+  </div>
+</div>

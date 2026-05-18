@@ -1,0 +1,190 @@
+<%- layout('layouts/boilerplate') %>
+
+<div class="container py-4">
+  <h2 class="section-title mb-4">Checkout</h2>
+  <div class="row g-4">
+
+    <!-- SHIPPING FORM -->
+    <div class="col-lg-7">
+      <div class="checkout-card">
+        <h5 class="fw-bold mb-3"><i class="bi bi-geo-alt-fill text-orange me-2"></i>Shipping Address</h5>
+        <form id="checkoutForm">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label class="form-label">Full Name *</label>
+              <input type="text" class="form-control rpt-input" id="fullName"
+                value="<%= user.fullName || '' %>" required placeholder="Rajesh Kumar">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label">Phone *</label>
+              <input type="tel" class="form-control rpt-input" id="phone"
+                value="<%= user.phone || '' %>" required placeholder="10-digit mobile">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Address Line 1 *</label>
+              <input type="text" class="form-control rpt-input" id="line1"
+                value="<%= (user.address && user.address.line1) || '' %>" required placeholder="House No, Street, Area">
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label">City *</label>
+              <input type="text" class="form-control rpt-input" id="city"
+                value="<%= (user.address && user.address.city) || '' %>" required placeholder="City">
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label">State *</label>
+              <input type="text" class="form-control rpt-input" id="state"
+                value="<%= (user.address && user.address.state) || 'Haryana' %>" required placeholder="State">
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label">Pincode *</label>
+              <input type="text" class="form-control rpt-input" id="pincode"
+                value="<%= (user.address && user.address.pincode) || '' %>" required placeholder="6-digit pincode" maxlength="6">
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- PAYMENT METHOD -->
+      <div class="checkout-card mt-3">
+        <h5 class="fw-bold mb-3"><i class="bi bi-credit-card-fill text-orange me-2"></i>Payment Method</h5>
+        <div class="payment-options">
+          <label class="payment-option active" id="opt-razorpay">
+            <input type="radio" name="payMethod" value="razorpay" checked onchange="selectPayment(this)">
+            <span>💳 Online Payment (UPI / Card / Net Banking)</span>
+            <span class="badge bg-success ms-auto">Recommended</span>
+          </label>
+          <label class="payment-option" id="opt-cod">
+            <input type="radio" name="payMethod" value="cod" onchange="selectPayment(this)">
+            <span>💵 Cash on Delivery</span>
+            <span class="text-muted small ms-auto">+₹50 COD charge</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="col-lg-5">
+      <div class="cart-summary-box">
+        <h5 class="fw-bold text-uppercase letter-spacing mb-3 pb-2 border-bottom border-secondary">Order Summary</h5>
+        <% cart.forEach(item => { %>
+          <div class="d-flex gap-2 mb-2 align-items-center">
+            <img src="<%= item.image %>" alt="" style="width:48px;height:36px;object-fit:cover;border-radius:4px;border:1px solid #333">
+            <div class="flex-fill small"><%= item.name %> <span class="text-muted">× <%= item.qty %></span></div>
+            <div class="fw-bold small">₹<%= (item.price * item.qty).toLocaleString() %></div>
+          </div>
+        <% }) %>
+        <hr class="border-secondary">
+        <div class="summary-row"><span>Subtotal</span><span>₹<%= subtotal.toLocaleString() %></span></div>
+        <% if (discount > 0) { %>
+          <div class="summary-row text-success"><span>Coupon (<%= (coupon && coupon.code) %>)</span><span>-₹<%= discount.toLocaleString() %></span></div>
+        <% } %>
+        <div class="summary-row"><span>Shipping</span><span><%= shipping === 0 ? '<span class="text-success">FREE</span>' : '₹' + shipping %></span></div>
+        <div class="summary-row"><span>GST (18%)</span><span>₹<%= gst.toLocaleString() %></span></div>
+        <div class="summary-row total-row"><span>Total</span><span class="text-orange">₹<%= total.toLocaleString() %></span></div>
+
+        <button class="btn btn-orange w-100 mt-3 btn-lg" id="placeOrderBtn" onclick="placeOrder(<%= total %>)">
+          <i class="bi bi-lock-fill me-1"></i> <span id="payBtnText">Pay ₹<%= total.toLocaleString() %></span>
+        </button>
+        <div class="text-center mt-2">
+          <small class="text-muted"><i class="bi bi-shield-check me-1"></i>100% Secure · Powered by Razorpay</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+const RAZORPAY_KEY = '<%= razorpayKeyId %>';
+const ORDER_TOTAL  = <%= total %>;
+let selectedMethod = 'razorpay';
+
+function selectPayment(radio) {
+  selectedMethod = radio.value;
+  document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('active'));
+  radio.closest('.payment-option').classList.add('active');
+  const btn = document.getElementById('payBtnText');
+  btn.textContent = selectedMethod === 'cod'
+    ? `Place Order (COD) ₹${ORDER_TOTAL.toLocaleString()}`
+    : `Pay ₹${ORDER_TOTAL.toLocaleString()}`;
+}
+
+function getShippingAddress() {
+  return {
+    fullName: document.getElementById('fullName').value.trim(),
+    phone:    document.getElementById('phone').value.trim(),
+    line1:    document.getElementById('line1').value.trim(),
+    city:     document.getElementById('city').value.trim(),
+    state:    document.getElementById('state').value.trim(),
+    pincode:  document.getElementById('pincode').value.trim(),
+  };
+}
+
+function validateForm() {
+  const addr = getShippingAddress();
+  for (const [k, v] of Object.entries(addr)) {
+    if (!v) { alert('Please fill in all address fields.'); return false; }
+  }
+  if (addr.phone.length !== 10) { alert('Please enter a valid 10-digit phone number.'); return false; }
+  if (addr.pincode.length !== 6) { alert('Please enter a valid 6-digit pincode.'); return false; }
+  return true;
+}
+
+async function placeOrder(total) {
+  if (!validateForm()) return;
+  const btn = document.getElementById('placeOrderBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+
+  if (selectedMethod === 'cod') {
+    submitOrder(null, null, null);
+    return;
+  }
+
+  // Create Razorpay order on server
+  const res  = await fetch('/orders/create-razorpay-order', { method: 'POST' });
+  const data = await res.json();
+  if (!data.success) { alert('Payment initiation failed. Please try again.'); btn.disabled = false; return; }
+
+  const options = {
+    key:         RAZORPAY_KEY,
+    amount:      data.order.amount,
+    currency:    'INR',
+    name:        'Rohit Power Tools',
+    description: 'Power Tool Purchase',
+    order_id:    data.order.id,
+    prefill: {
+      name:    document.getElementById('fullName').value,
+      contact: document.getElementById('phone').value,
+    },
+    theme: { color: '#f97316' },
+    handler: function (response) {
+      submitOrder(response.razorpay_order_id, response.razorpay_payment_id, response.razorpay_signature);
+    },
+    modal: {
+      ondismiss: function() { btn.disabled = false; btn.innerHTML = `<i class="bi bi-lock-fill me-1"></i> Pay ₹${total.toLocaleString()}`; }
+    }
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+function submitOrder(orderId, paymentId, signature) {
+  const form = document.createElement('form');
+  form.method = 'POST'; form.action = '/orders/place';
+  const fields = {
+    shippingAddress:   JSON.stringify(getShippingAddress()),
+    paymentMethod:     selectedMethod,
+    razorpayOrderId:   orderId   || '',
+    razorpayPaymentId: paymentId || '',
+    razorpaySignature: signature || '',
+    couponCode:        '<%= (coupon && coupon.code) || "" %>',
+  };
+  for (const [k, v] of Object.entries(fields)) {
+    const inp = document.createElement('input');
+    inp.type = 'hidden'; inp.name = k; inp.value = v;
+    form.appendChild(inp);
+  }
+  document.body.appendChild(form);
+  form.submit();
+}
+</script>

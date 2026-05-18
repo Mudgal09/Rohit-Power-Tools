@@ -1,0 +1,29 @@
+<%- layout('layouts/boilerplate') %>
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">⚡ ROHIT <span>POWER</span> TOOLS</div>
+    <h4 class="text-center mb-4">Create an Account</h4>
+    <form action="/register" method="POST" novalidate>
+      <div class="mb-3">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-control rpt-input" name="fullName" placeholder="Rajesh Kumar">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Username *</label>
+        <input type="text" class="form-control rpt-input" name="username" required placeholder="rajesh123" autofocus>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email *</label>
+        <input type="email" class="form-control rpt-input" name="email" required placeholder="rajesh@email.com">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password * <small class="text-muted">(min 6 characters)</small></label>
+        <input type="password" class="form-control rpt-input" name="password" required minlength="6" placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn btn-orange w-100 btn-lg">⚡ Create Account</button>
+    </form>
+    <div class="text-center mt-3 text-muted small">
+      Already have an account? <a href="/login" class="text-orange">Login here</a>
+    </div>
+  </div>
+</div>
